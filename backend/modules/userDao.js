@@ -14,7 +14,18 @@ async function createUser(username, email, password){
     return result.insertId;
 }
 
+async function getUserByEmail(email){
+    const [rows] = await db.query(
+        'SELECT * FROM users WHERE email = ?',
+        [email]
+    );
+    if(rows.length > 0)
+        return rows[0];
+    return null;
+}
+
 module.exports = {
     getAllUsers,
     createUser,
+    getUserByEmail,
 }

@@ -8,4 +8,5 @@ router.get('/', (req, res) =>{
 
 router.use('/all_users', userControllers.getAllUsers);
 router.use('/create_user', userControllers.createUser);
+router.use('/login_user', userControllers.authLogin);
 module.exports = router;

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const dotenv = require('dotenv');
 dotenv.config();
+const secretKey = process.env.JWT_SECRET;
 
 async function getAllUsers(req, res){
     try{
@@ -36,7 +37,28 @@ async function hashPassword(password){
     return await bcrypt.hash(password, saltRounds);
 }
 
+async function authLogin(req, res){
+    try{
+        const {email, password} = req.body;
+        if(!email || !password)
+            return res.status(400).json({error:'missing information'});
+        const user = await userDao.getUserByEmail(email);
+        if(!user)
+            return res.status(404).json({error:'user not found'});
+        const validPassword = await bcrypt.compare(password,user.password);
+        if(!validPassword)
+            return res.status(401).json({error:'Invalid Password'});
+        
+        const token = jwt.sign({id:user.id, email: user.email}, secretKey,{expiresIn: '7d',});
+        res.status(200).json({ message: 'Login successful', token })
+    }catch(error){
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 module.exports = {
     getAllUsers,
     createUser,
+    authLogin,
 }

@@ -29,7 +29,7 @@ async function isUsernameExist(username){
 
 async function insertUser(email, username, password){
     const [result] = await db.query(
-        'INSERT INTO users (email, username, password) VALUES ?, ?, ?',
+        'INSERT INTO users (email, username, password) VALUES (?, ?, ?)',
         [email, username, password]
     )
     return result.insertId;

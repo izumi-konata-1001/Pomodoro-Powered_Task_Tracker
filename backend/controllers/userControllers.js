@@ -38,7 +38,7 @@ async function createUser(req,res){
         const hashedPassword = await hashPassword(password);
         const createNewUser = await userDao.insertUser(email, username, hashedPassword)
         if(!createNewUser){
-            return res.status(409).json({
+            return res.status(500).json({
                 error:'registion error'
             })
         }
@@ -46,7 +46,7 @@ async function createUser(req,res){
             message:'new user register successfully'
         })
     }catch(error){
-        console.error('create user error');
+        console.error('create user error:', error);
         return res.status(500).json({
              error: 'Internal server error' 
         })
@@ -62,7 +62,7 @@ async function hashPassword(password){
 async function loginUser(req,res){
     const{email, password} = req.body;
     try{
-        const user = await userDao.getUserByEmail(email);
+        const user = await userDao.findUserByEmail(email);
         if(!user){
             return res.status(404).json({
                 error:'user not found'
@@ -82,7 +82,7 @@ async function loginUser(req,res){
         });
     }catch(error){
         console.error('Login error: ', error);
-        return res.status(500).josn({
+        return res.status(500).json({
             error:'Internal server error'
         })
     }

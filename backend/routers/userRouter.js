@@ -11,5 +11,5 @@ router.use('/all_users', userControllers.getAllUsers);
 router.use('/create', userControllers.createUser);
 router.use('/login', userControllers.loginUser);
 router.use('/change_password', verifyMiddleware.verifyTokenInBody, userControllers.changePassword);
-
+router.use('/me', verifyMiddleware.verifyTokenInBody,userControllers.getCurrentUser)
 module.exports = router;

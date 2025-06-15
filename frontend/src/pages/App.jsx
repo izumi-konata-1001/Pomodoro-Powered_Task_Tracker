@@ -1,7 +1,5 @@
 import { Outlet, Link} from "react-router-dom"
-import Home from "../components/main/Home"
-import Login from "../pages/Login"
-import Signup from "../pages/Signup"
+
 function App() {
   return (
     <div>

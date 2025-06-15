@@ -37,6 +37,7 @@ async function insertUser(email, username, password){
 
 async function changePassword(userId, password)
 {
+    console.log("🔧 Updating password for user:", userId, "with", password);
     const [result] = await db.query(
         'UPDATE users SET password = ? WHERE id = ?',
         [password, userId]
@@ -49,12 +50,23 @@ async function changePassword(userId, password)
 
 async function findUserByEmail(email)
 {
-    const [user] = await db.query(
+    const [users] = await db.query(
         'SELECT * FROM users WHERE email = ?',
         [email]
     )
-    if(user.length > 0)
-        return user[0];
+    if(users.length > 0)
+        return users[0];
+    return null;
+}
+
+async function findUserById(userId)
+{
+    const [users] = await db.query(
+        'SELECT * FROM users WHERE id = ?',
+        [userId]
+    )
+    if(users.length > 0)
+        return users[0];
     return null;
 }
 
@@ -64,5 +76,6 @@ module.exports = {
     isUsernameExist,
     insertUser,
     changePassword,
-    findUserByEmail
+    findUserByEmail,
+    findUserById,
 }

@@ -94,20 +94,52 @@ function createToken(user){
         email: user.email
     };
     const token = jwt.sign(payload,process.env.JWT_SECRET,{
-        expiresIn: '1h',
+        expiresIn: '7d',
     })
     return token;
 }
 
-async function changePassword(req, res){
-    const newPassword = req.body.password;
+async function getCurrentUser(req,res){
     const userId = req.user.id;
     try{
-        const hasChangedPassword = await userDao.chengePassword(userId, newPassword);
-        if(!hasChangedPassword){
-            return res.status(400).json({
-                error:'change password failed'
+        const currentUser = await userDao.findUserById(userId);
+        if(!currentUser){
+            return res.status(404).json({
+                error:'user not found'
             })
+        }
+        return res.status(200).json({
+             id: currentUser.id, email: currentUser.email, username: currentUser.username
+            });
+    }catch(error){
+        console.error("get current user error: ", error);
+        return res.status(500).json({
+            error: 'Internal server error'
+        })
+    }
+}
+
+async function changePassword(req, res){
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    console.log("old password:",oldPassword);
+    console.log("new password:", newPassword);
+    const userId = req.user.id;
+    try{
+        const user = await userDao.findUserById(userId);
+        const password = user.password;
+        const isMatch = await bcrypt.compare(oldPassword, password);
+        if(!isMatch){
+            return res.status(404).json({
+                error:'wrong password'
+            })
+        }
+        const hashedPassword = await hashPassword(newPassword);
+        const hasChangedPassword = await userDao.changePassword(userId, hashedPassword);
+        if(!hasChangedPassword){
+            return res.status(401).json({
+                error:'change password failed'
+            });
         }
         return res.status(200).json({
             message:'change password successfully'
@@ -125,4 +157,5 @@ module.exports = {
     createUser,
     loginUser,
     changePassword,
+    getCurrentUser,
 }

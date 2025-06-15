@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function Login(){
@@ -6,6 +6,7 @@ function Login(){
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
 
+    const navigate = useNavigate();
     const handleChange = (e) =>{
         const {name, value} = e.target;
         if(name == "email"){
@@ -37,7 +38,10 @@ function Login(){
             const result = await response.json();
             if(response.ok){
                 console.log("Login successfully, token:" , result.token);
+                localStorage.setItem("token", result.token);
                 setMessage("Login successfully");
+
+                navigate("/");
                 return;
             }
             else if(response.status == 400){

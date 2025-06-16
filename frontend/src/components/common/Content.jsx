@@ -1,11 +1,11 @@
 import Introduction from "../guest/Introduction";
-import AllTasks from "../logged-in/tastk/AllTasks";
+import DataAnalysis from "../logged-in/home/DataAnalysis";
 import { useAuth } from "../../context/authContext";
 function Home(){
     const {token} = useAuth();
     return(
         <div>
-            {token && <AllTasks />}
+            {token && <DataAnalysis />}
             {!token && <Introduction />}
         </div>
     )

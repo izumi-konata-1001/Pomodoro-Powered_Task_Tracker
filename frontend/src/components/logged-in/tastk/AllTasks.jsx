@@ -1,7 +1,7 @@
 function AllTasks(){
     return(
         <div>
-            all tasks
+            alltasks
         </div>
     )
 }

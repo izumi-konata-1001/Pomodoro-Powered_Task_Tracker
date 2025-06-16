@@ -1,6 +1,6 @@
 import { useAuth } from '../../context/authContext'
 import GuestNavigation from '../guest/Navigation'
-import LoggedInNavigation from '../logged-in/Navigation'
+import LoggedInNavigation from '../logged-in/home/Navigation'
 function Header(){
     const {token} = useAuth();
     return(

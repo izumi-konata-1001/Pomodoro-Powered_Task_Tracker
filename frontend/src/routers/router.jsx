@@ -3,6 +3,9 @@ import App from '../App'
 import Login from '../pages/Guest/Login'
 import Signup from '../pages/guest/Signup'
 
+import User from '../pages/logged-in/User'
+import Setting from '../components/logged-in/user/Setting'
+import ChangePassword from '../components/logged-in/user/ChangePassword'
 const router = createBrowserRouter([
     {
         path:'/',
@@ -16,6 +19,14 @@ const router = createBrowserRouter([
     {
         path:'/signup',
         element:<Signup />
+    },
+    {
+        path:'/user',
+        element:<User />,
+        children:[
+            {index:true, element:<Setting />},
+            {path:'', element:<ChangePassword />}
+        ]
     }
 ])
 

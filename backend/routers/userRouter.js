@@ -8,8 +8,8 @@ router.get('/', (req,res) => {
 const userControllers = require('../controllers/userControllers');
 const verifyMiddleware = require('../middleware/verifyTokenMiddleware');
 router.use('/all_users', userControllers.getAllUsers);
-router.use('/create', userControllers.createUser);
-router.use('/login', userControllers.loginUser);
-router.use('/change_password', verifyMiddleware.verifyTokenInBody, userControllers.changePassword);
-router.use('/me', verifyMiddleware.verifyTokenInBody,userControllers.getCurrentUser)
+router.post('/create', userControllers.createUser);
+router.post('/login', userControllers.loginUser);
+router.post('/change_password', verifyMiddleware.verifyTokenInHeaders, userControllers.changePassword);
+router.get('/me', verifyMiddleware.verifyTokenInHeaders,userControllers.getCurrentUser)
 module.exports = router;

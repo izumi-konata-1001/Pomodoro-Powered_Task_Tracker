@@ -2,15 +2,17 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-function verifyTokenInBody(req,res, next){
-      const authHeader = req.headers.authorization;
+function verifyTokenInHeaders(req,res, next){
+    const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
+    
     if(!token){
         return res.status(401).json({
             error: 'Token is required'
         })
     }
     try{
+        console.log('token:', token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         console.log("Verifying token:", token);
         req.user = decoded;
@@ -24,5 +26,5 @@ function verifyTokenInBody(req,res, next){
 }
 
 module.exports ={
-    verifyTokenInBody,
+    verifyTokenInHeaders,
 }

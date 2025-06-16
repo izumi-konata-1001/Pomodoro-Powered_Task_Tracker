@@ -11,4 +11,7 @@ router.use('/user', userRouter);
 const taskRouter = require('./taskRouter');
 router.use('/task', taskRouter);
 
+const issueRouter = require('./issueRouter');
+router.use('/issue', issueRouter);
+
 module.exports = router;

@@ -4,7 +4,7 @@ function Tasks(){
     return(
         <div>
             <Header />
-            <h1>tasks page</h1>
+            <h1>tasks& issues page</h1>
         </div>
     )
 }

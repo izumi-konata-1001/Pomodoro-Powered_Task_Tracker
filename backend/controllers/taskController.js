@@ -5,14 +5,21 @@ async function getTasksByUserId(req,res){
     const order = req.body.order;
     try{
         if(order == 'DESC'){
-            const tasks = getTasksByDESC(userId);
+            const tasks =await getTasksByDESC(userId);
+            if(tasks.length === 0){
+                return res.status(404).json({ error: 'no tasks found' });
+            }
             res.status(200).json({
                 message:`get tasks successfully, order: ${order}`,
                 tasks: tasks,
             })
         }
         else if(order == 'ASC'){
-            const tasks = getTasksByASC(userId);
+            const tasks =await getTasksByASC(userId);
+            if(tasks.length == 0)
+            {
+                return res.status(404).json({ error: 'no tasks found' });
+            }
             res.status(200).json({
                 message:`get tasks successfully, order: ${order}`,
                 tasks: tasks,
@@ -44,8 +51,10 @@ async function createTask(req, res){
     const description = req.body.description;
     const title = req.body.title;
     const completed = req.body.completed;
+    const issueId = null;
+    const step = null;
     try{
-        const createTask = await taskDao.insertTask(userId, title, description, completed);
+        const createTask = await taskDao.insertTask(userId, issueId, step, title, description, completed);
         if(!createTask){
             return res.status(409).json({
                 error:'create task error'
@@ -76,22 +85,22 @@ async function editTask(req,res){
             })
         }
         else{
-            if(!isEmpty(description))
+            if(description !== undefined)
             {
-                const result = taskDao.changeDescription(id, description);
+                const result =await taskDao.changeDescription(id, description);
                 if(!result)
                     return res.status(409).json({
                 error: 'edit description failed'});
             }
-            if(!isEmpty(title))
+            if(title !== undefined)
             {
-                const result = taskDao.changeTitle(id,description);
+                const result =await taskDao.changeTitle(id,title);
                 if(!result)
                     return res.status(409).json({
                 error: 'edit title failed'});
             }
-            if(!isEmpty(completed)){
-                const result = taskDao.changeCompleted(id, description);
+            if(completed != undefined){
+                const result =await taskDao.changeCompleted(id, completed);
                 if(!result)
                     return res.status(409).json({
                 error: 'edit completed failed'});
@@ -106,12 +115,6 @@ async function editTask(req,res){
             error:'Internal server error'
         });
     }
-}
-
-function isEmpty(content){
-    if (!content || content.trim() === '')
-        return false;
-    return true;
 }
 
 async function deleteTask(req,res){

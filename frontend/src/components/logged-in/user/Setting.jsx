@@ -12,6 +12,7 @@ function Setting(){
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
 
+    console.log('token:', token);
     const fetchUser = async () => {
         try{
             const response = await fetch(`${BASE_URL}/user/me`,{

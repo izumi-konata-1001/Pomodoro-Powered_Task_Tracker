@@ -24,9 +24,9 @@ async function getIssuesByUserId(req,res){
     const userId = req.user.id;
     const order = req.body.order;
     try{
-        if(order == "DESC"){
-            const issues = getIssuesByDESC(userId, order);
-            if(!issues){
+        if(order === "DESC"){
+            const issues = await getIssuesByDESC(userId, order);
+            if(issues.length === 0){
                 return res.status(404).json({
                     error: 'no more issues'
                 });
@@ -38,9 +38,9 @@ async function getIssuesByUserId(req,res){
                 });
             }
         }
-        else if(order == "ACS"){
-            const issues = getIssusByACS(userId, order);
-            if(!issues){
+        else if(order === "ASC"){
+            const issues = await getIssusByASC(userId, order);
+            if(issues.length === 0){
                 return res.status(404).json({
                     error:'no more issues'
                 });
@@ -65,11 +65,11 @@ async function getIssuesByUserId(req,res){
     }
 }
 
-async function getIssusByACS(userId, order){
-    return await issueDao.getAllIssuesByUserIdACS(userId);
+async function getIssusByASC(userId){
+    return await issueDao.getAllIssuesByUserIdASC(userId);
 }
 
-async function getIssuesByDESC(userId, order){
+async function getIssuesByDESC(userId){
     return await issueDao.getAllIssuesByUserIdDESC(userId);
 }
 
@@ -84,29 +84,25 @@ async function getIssueByIssueId(req,res){
             })
         }else{
             const tasks = await taskDao.findTasksByUserIdAndIssueId(userId, issueId);
+            console.log("tasks:", tasks);
             if(!tasks){
-                return res.statue(200).json({
+                return res.status(200).json({
                     message:'find issue',
-                    title: issue.title,
-                    description:issue.description,
-                    create_time: issue.create_time,
-                    update_time: issue.update_time,
+                    issue:issue,
+                    tasks:null,
                 })
             }
             else{
-                return res.statue(200).json({
+                return res.status(200).json({
                     message:'find issue',
-                    title: issue.title,
-                    description:issue.description,
+                    issue:issue,
                     tasks:tasks,
-                    create_time: issue.create_time,
-                    update_time: issue.update_time,
                 })
             }
         }
     }catch(error){
         console.error('get issue by id failed error, error:', error);
-        return res.statue(500).json({
+        return res.status(500).json({
             error:'Intermal Server Error'
         })
     }
@@ -157,7 +153,7 @@ async function addTasks(req, res){
 
     }catch(error){
         console.error('add tasks into issue failed error, error:', error);
-        return res.statue(500).json({
+        return res.status(500).json({
             error:'Intermal Server Error'
         })
     }
@@ -169,25 +165,30 @@ async function editIssue(req,res){
     const title = req.body.title;
 
     try{
-        if(!description){
+        if(description){
             const result = await issueDao.changeDescription(issueId, description);
-                if(!result)
-                    return res.status(409).json({
-                error: 'edit description failed'});
+            if(!result){                
+                return res.status(409).json({
+                 error: 'edit description failed'});
+            }
         }
-        if(!title){
+        if(title){
             const result = await issueDao.changeTitle(issueId, title);
                 if(!result)
                     return res.status(409).json({
                 error: 'edit title failed'});
         }
-
-        return res.statue(200).json({
+        if (!description && !title) {
+            return res.status(409).json({ 
+                error: 'please enter description or title' 
+            });
+        }
+        return res.status(200).json({
             message:'edit issue successfully'
         });
     }catch(error){
         console.error('edit issue failed error, error:', error);
-        return res.statue(500).json({
+        return res.status(500).json({
             error:'Intermal Server Error'
         })
     }

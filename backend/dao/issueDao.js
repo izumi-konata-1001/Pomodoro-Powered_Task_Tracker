@@ -9,15 +9,15 @@ async function getAllIssues(){
 
 async function getAllIssuesByUserIdDESC(userId){
     const [rows] = await db.query(
-        'SELECT * FROM issuse WHERE user_id = ? ORDER BY created_at DESC',
+        'SELECT * FROM issues WHERE user_id = ? ORDER BY created_at DESC',
         [userId]
     );
     return rows;
 }
 
-async function getAllIssuesByUserIdACS(userId){
+async function getAllIssuesByUserIdASC(userId){
     const [rows] = await db.query(
-        'SELECT * FROM issuse WHERE user_id = ? ORDER BY created_at ACS',
+        'SELECT * FROM issues WHERE user_id = ? ORDER BY created_at ASC',
         [userId]
     );
     return rows;
@@ -65,7 +65,7 @@ async function changeDescription(id, description){
 module.exports = {
     getAllIssues,
     getAllIssuesByUserIdDESC,
-    getAllIssuesByUserIdACS,
+    getAllIssuesByUserIdASC,
     getIssueById,
     insertIssue,
     changeTitle,

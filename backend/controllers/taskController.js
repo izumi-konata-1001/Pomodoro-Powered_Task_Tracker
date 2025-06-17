@@ -46,6 +46,28 @@ async function getTasksByASC(userId){
     return await taskDao.findTasksByUserIdASC(userId);
 }
 
+async function getTaskById(req,res){
+    const taskId = req.body.taskId;
+    try{
+        const task = await taskDao.findTaskById(taskId);
+        if(!task){
+            return res.status(404).json({
+                error:'task no found'
+            });
+        }
+        console.log("task:", task);
+        return res.status(200).json({
+            message:'find task successfully',
+            task:task,
+        });
+    }catch(error){
+        console.error('get task by id failed, error:',error);
+        res.status(500).json({
+            error:'Internal Server error'   
+        })
+    }
+}
+
 async function createTask(req, res){
     const userId = req.user.id;
     const description = req.body.description;
@@ -146,9 +168,32 @@ async function isExsit(id){
     return await taskDao.isExsit(id);
 }
 
+async function editComplete(req,res){
+    const taskId = req.body.issueId;
+
+    try{
+        const result = await taskDao.changeCompleted(taskId);
+        if(!result){
+            res.status(409).json({
+                error:'edit complete failed'
+            });
+        }
+        res.status(200).json({
+            message:'edit complete successfully '
+        })
+    }catch(error){
+        console.error('edit complete error, error:', error);
+        res.status(500).json({
+            error:'Internal server error'
+        });
+    }
+}
+
 module.exports = {
     getTasksByUserId,
     createTask,
     editTask,
     deleteTask,
+    editComplete,
+    getTaskById,
 }

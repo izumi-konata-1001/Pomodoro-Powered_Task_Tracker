@@ -8,9 +8,10 @@ router.get('/', (req,res) => {
 })
 
 router.use('/all', issueControllers.getAllIssues)
-router.use('/user_issues',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.getIssuesByUserId);
-router.use('/create',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.createIssue);
-router.use('/edit',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.editIssue);
-router.use('/add_task',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.addTasks);
+router.post('/user_issues',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.getIssuesByUserId);
+router.post('/create',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.createIssue);
+router.post('/edit',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.editIssue);
+router.post('/add_task',verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.addTasks);
+router.post('/detail', verifyTokenMiddleware.verifyTokenInHeaders, issueControllers.getIssueByIssueId);
 
 module.exports = router;

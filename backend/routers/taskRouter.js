@@ -9,7 +9,8 @@ router.get('/', (req,res) => {
 router.use('/user_tasks', verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.getTasksByUserId);
 router.post('/create', verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.createTask);
 router.post('/edit',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.editTask);
+router.post('/complete',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.editTask)
 router.post('/delete', verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.deleteTask);
-
+router.post('/detail',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.getTaskById);
 
 module.exports = router;

@@ -93,7 +93,7 @@ async function changeTitle(id, title){
 
 async function insertIssue(id, issueId, step){
     const [result] = await db.query(
-        'UPDATE tasks SET issue_id = ?, step = ? WHERE id = ?',
+        'UPDATE tasks SET issue_id = ?, step_number = ? WHERE id = ?',
         [issueId, step, id]
     )
 
@@ -115,13 +115,22 @@ async function deleteTask(id){
 
 async function findTasksByUserIdAndIssueId(userId, issueId){
     const [tasks] = await db.query(
-        'SELECT * FROM tasks WHERE user_id = ? AND issue_id = ?',
+        'SELECT * FROM tasks WHERE user_id = ? AND issue_id = ? ORDER BY step_number ASC',
         [userId, issueId]
     );
 
     return tasks;
 }
 
+async function findTaskById(taskId){
+    const [task] = await db.query(
+        'SELECT * FROM tasks WHERE id = ?',
+        [taskId]
+    )
+    if(task.length > 0)
+        return task[0];
+    return null;
+}
 
 module.exports = {
     findTasksByUserIdDESC,
@@ -136,4 +145,5 @@ module.exports = {
     deleteTask,
     findTasksByUserIdAndIssueId,
     insertIssue,
+    findTaskById,
 }

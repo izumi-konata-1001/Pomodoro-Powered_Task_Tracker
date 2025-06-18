@@ -91,6 +91,39 @@ async function changeTitle(id, title){
     return false;
 }
 
+async function changeStepNumber(taskId,stepNumber){
+    const [result] =await db.query(
+        'UPDATE tasks SET step_number = ? WHERE id = ?',
+        [stepNumber, taskId]
+    );
+
+    if(result.affectedRows == 1)
+        return true;
+    return false;
+}
+
+async function deleteTaskFromIssue(taskId){
+    const [result] = await db.query(
+        'UPDATE tasks SET step_number = ?, issue_id = ? WHERE id = ?',
+        [null, null, taskId]
+    )
+        
+    if(result.affectedRows == 0)
+        return false;
+    return true;
+}
+
+async function addTaskIntoIssue(taskId, issueId,stepNumber){
+    const [result] = await db.query(
+        'UPDATE tasks SET issue_id = ?, step_number = ? WHERE id = ?',
+        [issueId, stepNumber, taskId]
+    );
+
+    if(result.affectedRows == 1)
+        return true;
+    return false;
+}
+
 async function insertIssue(id, issueId, step){
     const [result] = await db.query(
         'UPDATE tasks SET issue_id = ?, step_number = ? WHERE id = ?',
@@ -122,15 +155,17 @@ async function findTasksByUserIdAndIssueId(userId, issueId){
     return tasks;
 }
 
-async function findTaskById(taskId){
-    const [task] = await db.query(
-        'SELECT * FROM tasks WHERE id = ?',
-        [taskId]
+async function resetAllTasksInIssue(userId,issueId){
+    const [result] = await db.query(
+        'UPDATE tasks SET step_number = ? WHERE user_id = ? AND issue_id = ?',
+        [null, userId, issueId]
     )
-    if(task.length > 0)
-        return task[0];
-    return null;
+    if(result.affectedRows == 1)
+        return true;
+    return false;
+
 }
+
 
 module.exports = {
     findTasksByUserIdDESC,
@@ -145,5 +180,8 @@ module.exports = {
     deleteTask,
     findTasksByUserIdAndIssueId,
     insertIssue,
-    findTaskById,
+    deleteTaskFromIssue,
+    addTaskIntoIssue,
+    changeStepNumber,
+    resetAllTasksInIssue
 }

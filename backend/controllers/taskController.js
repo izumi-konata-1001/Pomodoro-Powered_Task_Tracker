@@ -189,6 +189,56 @@ async function editComplete(req,res){
     }
 }
 
+async function removeFromIssueEditOtherStep(req, res){
+    const taskId = req.body.taskId;
+    const issueId = req.body.issueId;
+    const userId = req.user.id;
+    const tasks = await getTasksByIssueId(userId,issueId);
+    const tasks_num = tasks.length;
+    const removeTask = await taskDao.findTaskById(taskId);
+    const removeStep = removeTask.step_number;
+    let counter = removeStep;
+    try{
+        const result = await taskDao.deleteTaskFromIssue(taskId);
+        if(!result){
+            return res.status(409).json({
+                error:'failed to delete task from issue'
+            });
+        }
+        for(let i = 0; i < tasks_num; i++){
+            if(tasks[i].step_number > removeStep){
+                const result = await taskDao.changeStepNumber(tasks[i].id,counter);
+                if(!result){
+                    console.error('change step failed, no task step number change');
+                    return res.status(500).json({
+                        error:'change step error'
+                    })
+                }
+                else{
+                counter ++;
+                }
+            }
+        }
+        return res.status(200).json({
+            message:'delete task from issue successfully'
+        })
+    }catch(error){
+        console.error('delete task from issue error:', error);
+        return res.status(500).json({
+            error:'failed to remove task from issue'
+        })
+    }
+}
+
+async function getTasksByIssueId(userId, issueId){
+    try{
+        const tasks = await taskDao.findTasksByUserIdAndIssueId(userId, issueId);
+        return tasks;
+    }catch(error){
+        console.error('get task by issue id failed, error:', error);
+    }
+}
+
 module.exports = {
     getTasksByUserId,
     createTask,
@@ -196,4 +246,5 @@ module.exports = {
     deleteTask,
     editComplete,
     getTaskById,
+    removeFromIssueEditOtherStep,
 }

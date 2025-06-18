@@ -38,7 +38,8 @@ function CreateTask(){
                 },
                 body:JSON.stringify({
                     title: title,
-                    description: description
+                    description: description,
+                    complete:complete,
                 })
             });
             

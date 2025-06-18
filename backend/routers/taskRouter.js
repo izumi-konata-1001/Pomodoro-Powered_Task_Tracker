@@ -12,5 +12,6 @@ router.post('/edit',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.e
 router.post('/complete',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.editTask)
 router.post('/delete', verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.deleteTask);
 router.post('/detail',verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.getTaskById);
+router.post('/remove', verifyTokenMiddleware.verifyTokenInHeaders,taskControllers.removeFromIssueEditOtherStep);
 
 module.exports = router;

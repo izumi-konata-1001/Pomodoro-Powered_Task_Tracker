@@ -2,13 +2,16 @@ import { useEffect,useState } from "react";
 import { useParams} from "react-router-dom";
 import { useAuth } from "../../../../context/authContext";
 import BackButton from "../../../common/BackButton";
+
+import EditTask from "./EditTask";
+import IssueBelongto from "./IssueBelongto";
 function TaskDetail(){
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const {token} = useAuth();
     const [task, setTask] = useState("");
     const [message, setMessage] = useState("");
     const {task_id} = useParams();
-
+    const [showEdit, setShowEdit] = useState(false); 
     console.log("task id:", task_id);
     const fetchTask = async () =>{
         try{
@@ -27,6 +30,7 @@ function TaskDetail(){
             const result = await response.json();
 
             if(response.ok){
+                console.log("task:", result.task);
                 setTask(result.task);
                 setMessage("get task detail successfully");
                 console.log('fetch task detail successfully,message:', result.message);
@@ -66,9 +70,18 @@ function TaskDetail(){
                     <p>Title:{task.title}</p>
                     <p>Decription: {task.description}</p>
                     <p>Status: {task.completed}</p>
-                    <p>issue:{task.issue_id}</p>
+                    {task.issue_id ?(
+                        <IssueBelongto task={task} />
+                    ): (<p>issue: not belong to any issue</p>)
+                    }
                     <p>create time: {task.created_at}</p>
                     <p>update time: {task.updated_at}</p>
+                    <button onClick={() => setShowEdit(!showEdit)}>
+                        {showEdit ? "close" : "open"}
+                    </button>
+
+                    {showEdit && <EditTask task={task} />}
+                    
                 </div>
             ):(
                 <p>no task found</p>

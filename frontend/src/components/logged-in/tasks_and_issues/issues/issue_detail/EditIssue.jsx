@@ -1,19 +1,14 @@
+import { useAuth } from "../../../../../context/authContext";
 import { useState } from "react";
-import { useAuth } from "../../../../context/authContext";
-import { useNavigate } from "react-router-dom";
-function EditTask(props){
-    const navigate = useNavigate();
+function EditIssue(props){
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const {token} = useAuth();
 
-    const oldTitle = props.task.title;
-    const oldDescription = props.task.description;
-    const oldCompleted = props.task.completed === 1;
-    const taskId = props.task.id;
-    console.log("oldComplete:", oldCompleted);
+    const oldTitle = props.issue.title;
+    const oldDescription = props.issue.description;
+    const issueId = props.issue.id;
     const [title, setTitle] = useState(oldTitle);
     const [description, setDescription] = useState(oldDescription);
-    const [completed, setCompleted] = useState(oldCompleted);
     const [message, setMessage] = useState("");
 
     const handleChange = (e)=>{
@@ -23,9 +18,6 @@ function EditTask(props){
         }
         else if(name == "description"){
             setDescription(value);
-        }
-        else if (name === "complete") {
-            setCompleted(value === "true");
         }
     }
 
@@ -41,17 +33,16 @@ function EditTask(props){
         }
 
         try{
-            const response = await fetch(`${BASE_URL}/task/edit`,{
+            const response = await fetch(`${BASE_URL}/issue/edit`,{
                 method:'POST',
                 headers:{
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
                 body:JSON.stringify({
-                    id:taskId,
+                    issueId:issueId,
                     title: title,
                     description: description,
-                    completed:completed,
                 })
             });
 
@@ -59,25 +50,25 @@ function EditTask(props){
 
             if(response.ok){
                 console.log("message:",result.message);
-                setMessage("edit task successfully");
+                setMessage("edit issue successfully");
                 return;
             }
             else if(response.status == 409){
-                setMessage("edit task failed");
+                setMessage("edit issue failed");
                 return;
             }
             else if(response.statue == 500){
-                setMessage("edit task failed, check server");
+                setMessage("edit issue failed, check server");
                 return;
             }
         }catch(error){
-            console.error('edit task failed, error:', error);
-            setMessage("edit task failed");
+            console.error('edit issue failed, error:', error);
+            setMessage("edit issue failed");
         }
     }
     return(
         <div>
-            <h3>edit task</h3>
+            <h3>edit issue</h3>
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
                 <label>title: </label>
@@ -88,35 +79,10 @@ function EditTask(props){
                 <input name="description" value={description} onChange={handleChange} required />
                 <br />
 
-
-                <label>
-                    Complete:
-                <input
-                    type="radio"
-                    name="completed"
-                    value="true"
-                    checked={completed === true}
-                    onChange={() => setCompleted(true)}
-                />
-                True
-                </label>
-
-                <label>
-                <input
-                    type="radio"
-                    name="completed"
-                    value="false"
-                    checked={completed === false}
-                    onChange={() => setCompleted(false)}
-                />
-                False
-                </label>
-                <br />
-
                 <button type="submit">save</button>
             </form>
         </div>
     )
 }
 
-export default EditTask;
+export default EditIssue;

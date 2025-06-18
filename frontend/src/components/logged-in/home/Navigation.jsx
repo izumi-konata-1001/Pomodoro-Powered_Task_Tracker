@@ -11,7 +11,7 @@ function Navigation(){
         <div>
             <Link to='/'>Home</Link>
             <br />
-            <Link to='/tasks_and_issues'>Tasks</Link>
+            <Link to='/tasks_and_issues'>Tasks and Issues</Link>
             <br />
             <Link to='/user'>UserInfo</Link>
             <br />

@@ -1,5 +1,5 @@
 import {createBrowserRouter, Navigate} from 'react-router-dom'
-import App from '../App'
+import Home from '../pages/Home';
 import Login from '../pages/Guest/Login'
 import Signup from '../pages/guest/Signup'
 
@@ -19,7 +19,7 @@ import CreateIssue from '../components/logged-in/tasks_and_issues/issues/CreateI
 const router = createBrowserRouter([
     {
         path:'/',
-        element:<App />,
+        element:<Home />,
 
     },
     {

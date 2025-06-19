@@ -1,7 +1,7 @@
-import Introduction from "../guest/Introduction";
-import DataAnalysis from "../logged-in/home/DataAnalysis";
+import DataAnalysis from '../logged-in/home/DataAnalysis'
+import Introduction from '../guest/Introduction';
 import { useAuth } from "../../context/authContext";
-function Home(){
+function Content(){
     const {token} = useAuth();
     return(
         <div>
@@ -11,4 +11,4 @@ function Home(){
     )
 }
 
-export default Home;
+export default Content;

@@ -101,7 +101,7 @@ async function editTask(req,res){
     const completed = req.body.completed;
     
     try{
-        if(!isExsit(id)){
+        if(!isExit(id)){
             return res.status(404).json({
                 error:'task no found'
             })
@@ -140,14 +140,39 @@ async function editTask(req,res){
 }
 
 async function deleteTask(req,res){
-    const {id} = req.body;
+    const taskId = req.body.id;
+    const userId = req.user.id;
     try{
-        if(!isExsit(id)){
+        if(!isExit(taskId)){
             return res.status(404).json({
                 error:'task no found'
             });
         }
-        const result = await taskDao.deleteTask(id);
+
+        const removeTask = await taskDao.findTaskById(taskId);
+        if (!removeTask) 
+        {
+            return res.status(404).json({ error: 'Task to remove not found' });
+        }
+        if(removeTask.issue_id){
+            const removeStep = removeTask.step_number;
+            const issueId = removeTask.issue_id;
+            const tasks = await getTasksByIssueId(userId, issueId);
+
+            const deleteResult = await deleteTaskFromIssue(taskId);
+            if (!deleteResult) 
+            {
+                return res.status(409).json({ error: 'Failed to delete task from issue' });
+            }
+
+            const stepUpdateResult = await changeOtherTaskStepNumber(tasks, removeStep);
+            if (!stepUpdateResult) 
+            {
+                return res.status(500).json({ error: 'Failed to reassign step numbers' });
+            }
+        }
+
+        const result = await taskDao.deleteTask(taskId);
         if(!result){
             return res.status(409).json({
                 error:'delete task error failed'
@@ -164,8 +189,8 @@ async function deleteTask(req,res){
     }
 }
 
-async function isExsit(id){
-    return await taskDao.isExsit(id);
+async function isExit(id){
+    return await taskDao.isExit(id);
 }
 
 async function editComplete(req,res){
@@ -193,32 +218,26 @@ async function removeFromIssueEditOtherStep(req, res){
     const taskId = req.body.taskId;
     const issueId = req.body.issueId;
     const userId = req.user.id;
-    const tasks = await getTasksByIssueId(userId,issueId);
-    const tasks_num = tasks.length;
-    const removeTask = await taskDao.findTaskById(taskId);
-    const removeStep = removeTask.step_number;
-    let counter = removeStep;
-    try{
-        const result = await taskDao.deleteTaskFromIssue(taskId);
-        if(!result){
-            return res.status(409).json({
-                error:'failed to delete task from issue'
-            });
+    try {
+        const tasks = await getTasksByIssueId(userId, issueId);
+        const removeTask = await taskDao.findTaskById(taskId);
+
+        if (!removeTask) 
+        {
+            return res.status(404).json({ error: 'Task to remove not found' });
         }
-        for(let i = 0; i < tasks_num; i++){
-            if(tasks[i].step_number > removeStep){
-                const result = await taskDao.changeStepNumber(tasks[i].id,counter);
-                if(!result){
-                    console.error('change step failed, no task step number change');
-                    return res.status(500).json({
-                        error:'change step error'
-                    })
-                }
-                else{
-                counter ++;
-                }
-            }
+
+        const removeStep = removeTask.step_number;
+        const deleteResult = await deleteTaskFromIssue(taskId);
+        if (!deleteResult) 
+        {
+            return res.status(409).json({ error: 'Failed to delete task from issue' });
         }
+        const stepUpdateResult = await changeOtherTaskStepNumber(tasks, removeStep);
+        if (!stepUpdateResult) {
+            return res.status(500).json({ error: 'Failed to reassign step numbers' });
+        }
+
         return res.status(200).json({
             message:'delete task from issue successfully'
         })
@@ -230,12 +249,59 @@ async function removeFromIssueEditOtherStep(req, res){
     }
 }
 
+async function deleteTaskFromIssue(taskId){
+    try{
+        const result = await taskDao.deleteTaskFromIssue(taskId);
+        return result;
+    }catch(error){
+        console.error('delete task from issue failed,error:',error)
+    }
+}
+
+async function changeOtherTaskStepNumber(tasks, removedStepNumber) {
+    let counter = removedStepNumber;
+    for (const task of tasks) {
+        if (task.step_number > removedStepNumber) {
+            const result = await taskDao.changeStepNumber(task.id, counter);
+            if (!result) {
+                console.error(`Failed to update step for task ${task.id}`);
+                return false;
+            }
+            counter++;
+        }
+    }
+    return true;
+}
+
 async function getTasksByIssueId(userId, issueId){
     try{
         const tasks = await taskDao.findTasksByUserIdAndIssueId(userId, issueId);
         return tasks;
     }catch(error){
         console.error('get task by issue id failed, error:', error);
+    }
+}
+
+async function getTasksNotBelongToIssue(req,res){
+    const userId = req.user.id;
+    try{
+        const tasks = await taskDao.getTasksNotBelongToIssue(userId);
+
+        if(!tasks){
+            return res.status(404).json({
+                error:'no more free tasks'
+            });
+        }
+        
+        return res.status(200).json({
+            message:'get tasks not belong to issue',
+            tasks:tasks
+        });
+    }catch(error){
+        console.error('failed get tasks not belong to issue, error:',error);
+        return res.status(500).json({
+            error:'Internal server error'
+        });
     }
 }
 
@@ -247,4 +313,5 @@ module.exports = {
     editComplete,
     getTaskById,
     removeFromIssueEditOtherStep,
+    getTasksNotBelongToIssue,
 }

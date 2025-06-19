@@ -4,8 +4,9 @@ function Navigation(){
 
     return(
         <div className="flex justify-around items-center text-center text-brand-dark">
-            <Link to='/login' className="w-1/2 hover:bg-brand-white">Login</Link>
-            <Link to='/signup' className="w-1/2 hover:bg-brand-white">Signup</Link>
+            <Link to='/' className="w-1/3 hover:bg-brand-white" >Home</Link>
+            <Link to='/login' className="w-1/3 hover:bg-brand-white">Login</Link>
+            <Link to='/signup' className="w-1/3 hover:bg-brand-white">Signup</Link>
         </div>
     )
 }

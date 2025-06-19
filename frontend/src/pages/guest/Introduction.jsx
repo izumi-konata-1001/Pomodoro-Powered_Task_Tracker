@@ -4,7 +4,9 @@ function Introduction(){
     return(
         <div>
             <Header />
-            <Introduction />
+            <div>
+                <Introduction />
+            </div>
         </div>
     )
 }

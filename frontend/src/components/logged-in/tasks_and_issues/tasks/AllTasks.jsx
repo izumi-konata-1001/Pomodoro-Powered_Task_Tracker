@@ -60,34 +60,40 @@ function AllTasks(){
     },[token,order]);
 
     return(
-        <div>
+            <div className="text-center space-y-4">
             <SwitchContentButton />
-            <h1>all tasks</h1>
-            <h3>{message}</h3>
-            
-            {
-                order === "DESC" ?(
-                    <button type="button" onClick={toggleOrder}>ASC</button>
-                ) : (
-                    <button type="button" onClick={toggleOrder}>DESC</button>
-                )
-            }
+            <h2 className="text-2xl font-semibold text-brand-dark">All Tasks</h2>
+            <p className="text-gray-700">{message}</p>
+
+            <button
+                type="button"
+                onClick={toggleOrder}
+                className="mb-4 bg-brand-secondary text-brand-dark px-4 py-2 rounded hover:bg-brand-primary hover:text-white transition"
+            >
+                Order: {order === "DESC" ? "ASC" : "DESC"}
+            </button>
+
             {tasks.length === 0 ? (
-                <p>no tasks found</p>
+                <p>No tasks found</p>
             ) : (
-                <ul>
-                    {tasks.map((task) => (
-                        <li key={task.id}>
-                            <h4>Title: {task.title}</h4>
-                            <p>Status: {task.completed ? 'Done' : 'Not done'}</p>
-                            <p>created at:{task.created_at}</p>
-                            <br />
-                            <button type="button" onClick={()=> goDetail(task.id)}>view detail</button>
-                        </li>
-                    ))}
+                <ul className="space-y-4">
+                {tasks.map((task) => (
+                    <li key={task.id} className="bg-white p-4 rounded shadow text-left">
+                    <h3 className="text-lg font-bold">Title: {task.title}</h3>
+                    <p>Status: {task.completed ? 'Done' : 'Not done'}</p>
+                    <p>Created at: {task.created_at}</p>
+                    <button
+                        type="button"
+                        onClick={() => goDetail(task.id)}
+                        className="mt-2 bg-brand-primary text-white px-4 py-1 rounded hover:bg-brand-dark transition"
+                    >
+                        View Detail
+                    </button>
+                    </li>
+                ))}
                 </ul>
             )}
-        </div>
+            </div>
     )
 }
 

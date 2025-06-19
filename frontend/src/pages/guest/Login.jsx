@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 
+import Header from '../../components/common/Header';
+
 function Login(){
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
@@ -45,7 +47,7 @@ function Login(){
             }
             else if(response.status == 404){
                 console.error("login failed, error:", result.error);
-                setMessage('use not found');
+                setMessage('user not found');
                 return;
             }
             else if(response.status == 400){
@@ -64,24 +66,44 @@ function Login(){
     }
 
     return(
-        <div>
-            <Link to="/">Home</Link>
-            <br />
-            <Link to="/signup">Signup</Link>
-            <h1>Login</h1>
-            <h3>{message}</h3>
+        <div className="bg-brand-dark min-h-screen">
+            <Header />
+            <div className="w-4/5 min-h-screen mx-auto bg-brand-light bg-opacity-90 flex flex-col justify-center items-center gap-4">
+            <h1 className="text-4xl font-bold text-brand-dark">Login</h1>
+            <h3 className="text-2xl text-brand-dark">{message}</h3>
 
-            <form onSubmit={handleSubmit}>
-                <label>email: </label>
-                <input name="email" value={email} onChange={handleChange} required />
-                <br />
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-3/4 max-w-md">
+                <div>
+                <label className="block mb-1">Email:</label>
+                <input
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                />
+                </div>
 
-                <label>password: </label>
-                <input name="password" value={password} onChange={handleChange} required />
-                <br />
+                <div>
+                <label className="block mb-1">Password:</label>
+                <input
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                />
+                </div>
 
-                <button type="submit">login</button>
+                <button
+                type="submit"
+                className="bg-brand-primary text-brand-white py-2 px-4 rounded hover:bg-brand-dark transition"
+                >
+                Login
+                </button>
             </form>
+            </div>
         </div>
     )
 }

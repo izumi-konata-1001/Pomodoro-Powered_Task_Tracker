@@ -2,9 +2,12 @@ import Header from "../../components/common/Header";
 
 function Pomodoro(){
     return(
-        <div>
+        <div className="bg-brand-dark min-h-screen">
             <Header />
-            <h1>Pomodoro</h1>
+            <div className="w-4/5 bg-brand-light bg-opacity-90 mx-auto min-h-screen">
+                <h1>Pomodoro</h1>
+            </div>
+            
         </div>
     )
 }

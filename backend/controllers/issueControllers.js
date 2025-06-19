@@ -170,24 +170,10 @@ async function editIssue(req,res){
 async function addTaskIntoIssue(req, res){
     const taskId = req.body.taskId;
     const issueId = req.body.issueId;
-    const stepNumber = req.body.stepNumber;
     const userId = req.user.id;
-
+    console.log("taskid:", taskId);
     const tasks = await taskDao.findTasksByUserIdAndIssueId(userId,issueId);
-    const task_number = tasks.length;
-    for(let i = 0; i < tasks.length; i++){
-        if(tasks[i].step_number == stepNumber){
-            return res.status(409).json({
-                error:'step already exsit'
-            });
-        }
-    }
-    const lastStep = tasks[task_number - 1].step_number;
-    if(stepNumber > lastStep + 1){
-        return res.status(404).json({
-            error:'invalid step, last index wrong'
-        })
-    }
+    const stepNumber = tasks.length + 1;
 
     try{
         const result = await taskDao.addTaskIntoIssue(taskId, issueId,stepNumber)
@@ -224,7 +210,7 @@ async function editTaskOrderInIssue(req,res){
                 }
                 const taskId = taskOrder.taskId;
                 const stepNumber = taskOrder.stepNumber;
-                const changeOrderResult = await taskDao.changeStepNumber(taskId, stepNumber)
+                const changeOrderResult = await taskDao.insertAndchangeStepNumber(taskId, stepNumber,issueId)
                 if(!changeOrderResult){
                     return res.status(409).json({
                         error:'change step number failed'

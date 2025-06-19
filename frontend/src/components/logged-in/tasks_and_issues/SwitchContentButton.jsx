@@ -8,12 +8,24 @@ function SwitchButton(){
     const handleAllIssues = () =>{
         navigate('/tasks_and_issues/all_issues');
     }
-    return(
-        <div>
-            <button type="button" onClick={handleAllTasks}>all tasks</button>
-            <button type="button" onClick={handleAllIssues}>all issues</button>
-        </div>
-    )
+  return (
+    <div className="flex justify-center gap-4 mb-6">
+      <button
+        type="button"
+        onClick={handleAllTasks}
+        className="bg-brand-primary text-white px-4 py-2 rounded hover:bg-brand-dark transition"
+      >
+        All Tasks
+      </button>
+      <button
+        type="button"
+        onClick={handleAllIssues}
+        className="bg-brand-primary text-white px-4 py-2 rounded hover:bg-brand-dark transition"
+      >
+        All Issues
+      </button>
+    </div>
+  );
 }
 
 export default SwitchButton;

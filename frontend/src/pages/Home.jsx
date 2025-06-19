@@ -3,7 +3,7 @@ import Content from '../components/home/Content'
 
 function Home(){
     return(
-        <div>
+        <div className="bg-brand-dark min-h-screen">
             <Header />
             <Content />
         </div>

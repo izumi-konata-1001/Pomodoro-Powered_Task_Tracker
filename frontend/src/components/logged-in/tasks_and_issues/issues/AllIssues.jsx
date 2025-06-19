@@ -61,35 +61,40 @@ function AllGroups(){
     }
 
     return(
-        <div>
-            <SwitchContentButton />
-            <h1>all issues</h1>
-            <h3>{message}</h3>
+<div className="text-center space-y-4">
+  <SwitchContentButton />
+  <h2 className="text-2xl font-semibold text-brand-dark">All Issues</h2>
+  <p className="text-gray-700">{message}</p>
 
-            {
-                order === "DESC" ?(
-                    <button type="button" onClick={toggleOrder}>ASC</button>
-                ) : (
-                    <button type="button" onClick={toggleOrder}>DESC</button>
-                )
-            }
+  <button
+    type="button"
+    onClick={toggleOrder}
+    className="mb-4 bg-brand-secondary text-brand-dark px-4 py-2 rounded hover:bg-brand-primary hover:text-white transition"
+  >
+    Order: {order === "DESC" ? "ASC" : "DESC"}
+  </button>
 
-            {issues.length === 0 ?(
-                <p>no issues found</p>
-            ): (
-                <ul>
-                    {issues.map((issue) =>(
-                        <li key={issue.id}>
-                            <h4>title: {issue.title}</h4>
-                            <p>description: {issue.description}</p>
-                            <p>create time: {issue.created_at}</p>
-                            <button type="button" onClick={()=> goDetail(issue.id)}>view detail</button>
-                        </li>
-                    ))}
-                </ul>
-            )
-            }
-        </div>
+  {issues.length === 0 ? (
+    <p>No issues found</p>
+  ) : (
+    <ul className="space-y-4">
+      {issues.map((issue) => (
+        <li key={issue.id} className="bg-white p-4 rounded shadow text-left">
+          <h3 className="text-lg font-bold">Title: {issue.title}</h3>
+          <p>Description: {issue.description}</p>
+          <p>Created at: {issue.created_at}</p>
+          <button
+            type="button"
+            onClick={() => goDetail(issue.id)}
+            className="mt-2 bg-brand-primary text-white px-4 py-1 rounded hover:bg-brand-dark transition"
+          >
+            View Detail
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
     )
 }
 

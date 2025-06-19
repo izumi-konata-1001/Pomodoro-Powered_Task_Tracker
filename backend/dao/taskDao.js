@@ -23,7 +23,7 @@ async function findTasksByUserIdASC(id){
     return tasks;
 }
 
-async function isExsit(taskId){
+async function isExit(taskId){
     const [tasks] = await db.query(
         'SELECT * FROM tasks WHERE id = ?',
         [taskId]
@@ -91,10 +91,21 @@ async function changeTitle(id, title){
     return false;
 }
 
+async function insertAndchangeStepNumber(taskId,stepNumber,issueId){
+    const [result] =await db.query(
+        'UPDATE tasks SET step_number = ?,issue_id = ? WHERE id = ?',
+        [stepNumber,issueId, taskId]
+    );
+
+    if(result.affectedRows == 1)
+        return true;
+    return false;
+}
+
 async function changeStepNumber(taskId,stepNumber){
     const [result] =await db.query(
         'UPDATE tasks SET step_number = ? WHERE id = ?',
-        [stepNumber, taskId]
+        [stepNumber,taskId]
     );
 
     if(result.affectedRows == 1)
@@ -114,11 +125,12 @@ async function deleteTaskFromIssue(taskId){
 }
 
 async function addTaskIntoIssue(taskId, issueId,stepNumber){
+    console.log("in dao: taskId:", taskId, "issue id:", issueId, "stepNumber:", stepNumber);
     const [result] = await db.query(
         'UPDATE tasks SET issue_id = ?, step_number = ? WHERE id = ?',
         [issueId, stepNumber, taskId]
     );
-
+    console.log("indao result:", result);
     if(result.affectedRows == 1)
         return true;
     return false;
@@ -157,20 +169,29 @@ async function findTasksByUserIdAndIssueId(userId, issueId){
 
 async function resetAllTasksInIssue(userId,issueId){
     const [result] = await db.query(
-        'UPDATE tasks SET step_number = ? WHERE user_id = ? AND issue_id = ?',
-        [null, userId, issueId]
+        'UPDATE tasks SET issue_id = ?, step_number = ? WHERE user_id = ? AND issue_id = ?',
+        [null,null, userId, issueId]
     )
-    if(result.affectedRows == 1)
-        return true;
-    return false;
 
+    return result.affectedRows >= 0;
+}
+
+async function getTasksNotBelongToIssue(userId){
+    const [tasks] = await db.query(
+        'SELECT * FROM tasks WHERE issue_id IS NULL AND user_id = ?',
+        [userId]
+    )
+    if(tasks.length == 0){
+        return null;
+    }
+    return tasks;
 }
 
 
 module.exports = {
     findTasksByUserIdDESC,
     findTasksByUserIdASC,
-    isExsit,
+    isExit,
     insertTask,
     findTaskById,
     isCompleted,
@@ -182,6 +203,8 @@ module.exports = {
     insertIssue,
     deleteTaskFromIssue,
     addTaskIntoIssue,
+    insertAndchangeStepNumber,
     changeStepNumber,
-    resetAllTasksInIssue
+    resetAllTasksInIssue,
+    getTasksNotBelongToIssue
 }

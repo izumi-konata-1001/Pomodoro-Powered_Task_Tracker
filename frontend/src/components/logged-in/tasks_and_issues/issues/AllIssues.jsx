@@ -49,6 +49,9 @@ function AllGroups(){
             return prevOrder === "DESC" ? "ASC" : "DESC"
         });
     }
+    const goCreateIssue = () => {
+        navigate('/tasks_and_issues/create_issue');
+    };
 
     useEffect(() => {
         if(token){
@@ -73,6 +76,14 @@ function AllGroups(){
   >
     Order: {order === "DESC" ? "ASC" : "DESC"}
   </button>
+  <br />
+  <button
+  type="button"
+  onClick={goCreateIssue}
+  className="mb-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+>
+  + Create New Issue
+</button>
 
   {issues.length === 0 ? (
     <p>No issues found</p>

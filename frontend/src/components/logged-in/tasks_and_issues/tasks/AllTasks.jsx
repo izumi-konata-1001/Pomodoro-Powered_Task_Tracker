@@ -14,6 +14,9 @@ function AllTasks(){
     const goDetail = (taskId) =>{
         navigate(`/tasks_and_issues/task_detail/${taskId}`)
     }
+    const goCreateTask = () => {
+        navigate('/tasks_and_issues/create_task');
+    };
 
     const fetchTasks = async () =>{
         try{
@@ -71,6 +74,14 @@ function AllTasks(){
                 className="mb-4 bg-brand-secondary text-brand-dark px-4 py-2 rounded hover:bg-brand-primary hover:text-white transition"
             >
                 Order: {order === "DESC" ? "ASC" : "DESC"}
+            </button>
+            <br />
+            <button
+            type="button"
+            onClick={goCreateTask}
+            className="mb-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+            >
+            + Create New Task
             </button>
 
             {tasks.length === 0 ? (

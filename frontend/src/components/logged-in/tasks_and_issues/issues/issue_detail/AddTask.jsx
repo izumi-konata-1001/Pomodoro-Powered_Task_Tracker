@@ -2,11 +2,12 @@ import { useAuth } from "../../../../../context/authContext";
 import { useState, useEffect } from "react";
 
 function AddTask(props) {
-  const { issueId, freeTasks, onRefresh, refreshFreeTasks: onFetchRestTasks } = props;
+  const { issueId,handleRefresh,refreshFlag } = props;
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { token } = useAuth();
   const [selectTaskId, setSelectTaskId] = useState("");
   const [message, setMessage] = useState("");
+  const [freeTasks, setFreeTasks] = useState([]);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -14,7 +15,6 @@ function AddTask(props) {
       setMessage("⚠️ Please select a task first.");
       return;
     }
-
     try {
       const response = await fetch(`${BASE_URL}/issue/add_task`, {
         method: 'POST',
@@ -30,9 +30,11 @@ function AddTask(props) {
       if (response.ok) {
         console.log("Successfully added task:", result.message);
         setMessage("✅ Task added successfully!");
-        setSelectTaskId(""); // reset
-        if (onRefresh) onRefresh();
-        if (onFetchRestTasks) onFetchRestTasks();
+        setSelectTaskId("");
+        if (handleRefresh){
+            handleRefresh();
+        }
+        fetchFreeTasks();
       } else {
         setMessage("❌ Failed to add task.");
       }
@@ -46,9 +48,30 @@ function AddTask(props) {
     setSelectTaskId(e.target.value);
   };
 
+  const fetchFreeTasks = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/task/free_tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setFreeTasks(result.tasks);
+      } else {
+        setFreeTasks([]);
+        console.warn("No available free tasks");
+      }
+    } catch (error) {
+      console.error("Error fetching free tasks:", error);
+    }
+  };
+
   useEffect(() => {
-    setSelectTaskId(""); // reset when tasks refresh
-  }, [freeTasks]);
+    fetchFreeTasks();
+  }, [refreshFlag]);
 
   return (
     <div className="mt-6">

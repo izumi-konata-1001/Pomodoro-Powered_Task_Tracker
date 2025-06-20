@@ -1,12 +1,15 @@
-import { useAuth } from "../../../../context/authContext";
+import { useAuth } from "../../../../../context/authContext";
 import { useState } from "react";
-import BackButton from "../../../common/BackButton";
+import BackButton from "../../../../common/BackButton";
+import AddTask from "./AddTask"
 function CreateIssue() {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { token } = useAuth();
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedTask, setSelectedTask] = useState([]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,6 +95,17 @@ function CreateIssue() {
             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-brand-primary"
           />
         </div>
+
+          {selectedTask.length > 0 ? (selectedTask.map((task)=>(
+            <div>
+                <p>task title:{task.title}</p>
+            </div>
+          )))
+          :(
+              <p>no task selected</p>
+          )}
+        <AddTask />
+
 
         <button
           type="submit"

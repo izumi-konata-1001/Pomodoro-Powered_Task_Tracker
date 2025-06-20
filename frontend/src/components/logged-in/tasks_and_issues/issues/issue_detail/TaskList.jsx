@@ -5,10 +5,10 @@ import { useState,useEffect } from "react";
 function TaskList(props) {
   const issueId = props.issueId;
   const tasks = props.tasks;
-  const onRefresh = props.onRefresh;
+  const onTriggerRefresh = props.onTriggerRefresh;
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { token } = useAuth();
-  const [freeTasks, setFreeTasks] = useState([]);
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const handleRemove = async (taskId) => {
     try {
@@ -28,10 +28,7 @@ function TaskList(props) {
 
       if (response.ok) {
         console.log('task remove successfully');
-        if (onRefresh) {
-          onRefresh();
-          fetchFreeTasks();
-        }
+        handleRefresh();
       } else {
         console.error('Failed to remove task,error:', result.error);
       }
@@ -40,38 +37,21 @@ function TaskList(props) {
     }
   };
 
-      
-  const fetchFreeTasks = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/task/free_tasks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setFreeTasks(result.tasks);
-      } else {
-        setFreeTasks([]);
-        console.warn("No available free tasks");
-      }
-    } catch (error) {
-      console.error("Error fetching free tasks:", error);
+  const handleRefresh = () =>{
+    if (onTriggerRefresh) {
+        onTriggerRefresh();
     }
-  };
+    setRefreshFlag((prev) => !prev);
+  }
 
-    useEffect(()=>{
-        fetchFreeTasks();
-    },[token])
+  useEffect(()=>{},[props.tasks]);
 
   return (
     <div className="mt-6">
       <h3 className="text-lg font-semibold mb-3">Task List</h3>
 
       {!tasks || tasks.length === 0 ? (
-        <p className="text-gray-500">No more tasks in this issue</p>
+        <p className="text-gray-500">No tasks in this issue</p>
       ) : (
         <div className="space-y-3">
           {tasks.map((task) => (
@@ -104,7 +84,7 @@ function TaskList(props) {
       )}
 
       <div>
-        <AddTask issueId={issueId} onRefresh={onRefresh} refreshFreeTasks={fetchFreeTasks} freeTasks={freeTasks}/>
+        <AddTask issueId={issueId} refreshFlag={refreshFlag} handleRefresh={handleRefresh}/>
       </div>
     </div>
   );

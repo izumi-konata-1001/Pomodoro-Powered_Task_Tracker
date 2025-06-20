@@ -15,7 +15,7 @@ import AllIssues from '../components/logged-in/tasks_and_issues/issues/AllIssues
 import TaskDetail from '../components/logged-in/tasks_and_issues/tasks/TaskDetail'
 import IssueDetail from '../components/logged-in/tasks_and_issues/issues/IssueDetail'
 import CreateTask from '../components/logged-in/tasks_and_issues/tasks/CreateTask'
-import CreateIssue from '../components/logged-in/tasks_and_issues/issues/CreateIssue'
+import CreateIssue from '../components/logged-in/tasks_and_issues/issues/create_issue/CreateIssue'
 const router = createBrowserRouter([
     {
         path:'/',

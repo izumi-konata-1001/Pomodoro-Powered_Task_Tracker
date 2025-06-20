@@ -17,6 +17,7 @@ function IssueDetail() {
   const [message, setMessage] = useState("");
   const [showEditTaskList, setShowEditTaskList] = useState(false);
   const [showEditIssue, setShowEditIssue] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const fetchIssue = async () => {
     try {
@@ -50,7 +51,11 @@ function IssueDetail() {
     if (token && issue_id) {
       fetchIssue();
     }
-  }, [token, issue_id]);
+  }, [token, issue_id, refreshTrigger]);
+
+  const triggerRefresh = ()=>{
+    setRefreshTrigger(prev => !prev);
+  }
 
   return (
     <div className="flex justify-center mt-8">
@@ -88,7 +93,7 @@ function IssueDetail() {
             <p>Update time: {issue.updated_at}</p>
             <p>Description: {issue.description}</p>
 
-            <TaskList tasks={tasks} token={token} issueId={issue.id} onRefresh={fetchIssue} />
+            <TaskList tasks={tasks} token={token} issueId={issue.id} onTriggerRefresh={triggerRefresh} />
 
             <button
               onClick={() => setShowEditTaskList(!showEditTaskList)}
@@ -106,7 +111,7 @@ function IssueDetail() {
                     token={token}
                     onSave={() => {
                     setShowEditTaskList(false);
-                    fetchIssue(); // ✅ 刷新任务数据
+                    fetchIssue();
                     }}
                     onCancel={() => setShowEditTaskList(false)}
                 />
